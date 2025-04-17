@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pickup Request | Clean Waste Cycle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+     <!-- Navbar -->
+  <header class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-green-600">Clean Waste Cycle</h1>
+      <nav class="space-x-6 hidden md:block">
+        <a href="index.html"class="hover:text-green-600">Home</a>
+        <a href="contact.html"class="hover:text-green-600">Contact</a>
+      
+        
+      </nav>
+    </div>
+  </header>
+
+  <div class="max-w-2xl mx-auto p-6 mt-10 bg-white rounded-2xl shadow-lg">
+    <h2 class="text-2xl font-bold text-center mb-6 text-green-700">Schedule a Pickup</h2>
+
+    <form action="https://formsubmit.co/obenggyanp@gmail.com" method="POST" class="space-y-4">
+      <!-- Redirect after submit -->
+      <input type="hidden" name="_next" value="https://thankyou-page.com">
+      <input type="hidden" name="_captcha" value="false">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Full Name</label>
+        <input type="text" name="name" required class="mt-1 w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Email</label>
+        <input type="email" name="email" required class="mt-1 w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Pickup Address</label>
+        <textarea name="address" required rows="3" class="mt-1 w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Waste Type</label>
+        <select name="waste_type" required class="mt-1 w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option disabled selected>Select type</option>
+          <option>Household Waste</option>
+          <option>Recyclables</option>
+          <option>Food Waste</option>
+          <option>Hazardous Waste</option>
+          <option>Others</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Preferred Pickup Date & Time</label>
+        <input type="datetime-local" name="pickup_time" required class="mt-1 w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Additional Notes (Optional)</label>
+        <textarea name="notes" rows="3" class="mt-1 w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+      </div>
+
+      <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-semibold shadow-md transition duration-300">
+        Submit Request
+      </button>
+    </form>
+
+    <h2 class="text-xl font-bold mt-10 text-center text-green-700">Nearby Collectors</h2>
+    <div id="collector-list" class="mt-4"></div>
+  </div>
+
+  <script>
+    // Function to calculate distance between two points (lat, lng)
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Earth's radius in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c; // Distance in km
+    }
+
+    // Function to get nearby collectors and display them
+    function showNearbyCollectors(latitude, longitude) {
+      const collectors = [
+        { name: "John's Collection", lat: 5.6037, lng: -0.1870 },
+        { name: "Green Waste Collectors", lat: 5.6000, lng: -0.1900 },
+        { name: "Eco-Waste", lat: 5.6090, lng: -0.1885 }
+      ];
+
+      const list = document.getElementById("collector-list");
+
+      collectors.forEach((collector) => {
+        const distance = calculateDistance(latitude, longitude, collector.lat, collector.lng);
+        const div = document.createElement("div");
+        div.classList = "border p-4 rounded shadow bg-white mb-4";
+
+        // Generating the HTML content dynamically
+        div.innerHTML = `
+          <h2 class="text-xl font-semibold">${collector.name}</h2>
+          <p>Distance: <strong>${distance.toFixed(2)} km</strong></p>
+          <form action="https://formsubmit.co/obenggyanp@gmail.com" method="POST">
+            <input type="hidden" name="collector_name" value="${collector.name}" />
+            <input type="hidden" name="user_latitude" value="${latitude}" />
+            <input type="hidden" name="user_longitude" value="${longitude}" />
+            <input type="hidden" name="_subject" value="New Pickup Request from Clean Waste Cycle" />
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="table" />
+            <button type="submit" class="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+              Request Pickup
+            </button>
+          </form>
+        `;
+
+        list.appendChild(div);
+      });
+    }
+
+    // Example usage: Get current location and show nearby collectors
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        showNearbyCollectors(latitude, longitude);
+      });
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  </script>
+
+</body>
+</html>
